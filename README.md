@@ -223,7 +223,7 @@ The agent uses **Action Groups** backed by Lambda functions to query DynamoDB in
 
 ## 👤 Author
 
-**Shivani Baheti**
+**Vedika Lohiya**
 
 ---
 
