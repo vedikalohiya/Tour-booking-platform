@@ -1,0 +1,40 @@
+PackageID (String)
+	
+Images
+	
+Name
+	
+Price
+
+PackageID (String)
+	
+Images
+	
+Name
+	
+Price
+
+Package1
+[ { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/Europe/image-1.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/Europe/image-2.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/Europe/image-3.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/Europe/image-4.jpg" } ]
+Europe
+300000
+Package5
+[ { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/rajasthan/img1.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/rajasthan/img2.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/rajasthan/img3.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/rajasthan/img4.jpg" }, ... ]
+Rajasthan
+44000
+Package3
+[ { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/maldives/img1.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/maldives/img2.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/maldives/img3.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/maldives/img4.jpg" }, ... ]
+Maldives
+200000
+Package4
+[ { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/vietnam/img1.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/vietnam/img2.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/vietnam/img3.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/vietnam/img4.jpg" }, ... ]
+Vietnam
+140000
+Package6
+[ { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/gujarat/img1.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/gujarat/img2.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/gujarat/img3.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/gujarat/img4.jpg" } ]
+Gujarat
+25000
+Package2
+[ { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/kerela/img1.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/kerela/img2.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/kerela/img3.jpg" }, { "S" : "https://gt-holidays-shivani.s3.ap-south-1.amazonaws.com/kerela/img4.jpg" }, ... ]
+Kerala
+30000

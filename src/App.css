@@ -1,0 +1,469 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #ffffff;
+}
+
+/* NAVBAR (GT STYLE) */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 50px;
+  background: white;
+  align-items: center;
+  border-bottom: 3px solid #f4c430;
+}
+
+.navbar h2 {
+  background: #f4c430;
+  padding: 8px 15px;
+  font-weight: bold;
+}
+
+.navbar a {
+  color: black;
+  margin-left: 25px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.navbar a:hover {
+  color: #f4c430;
+}
+
+/* HERO */
+.hero {
+  height: 90vh;
+  background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e") center/cover no-repeat;
+}
+
+.overlay {
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.overlay h1 {
+  font-size: 50px;
+}
+
+.overlay button {
+  padding: 14px 28px;
+  background: #f4c430;
+  border: none;
+  color: black;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* FEATURES */
+.features {
+  display: flex;
+  justify-content: space-around;
+  padding: 60px;
+}
+
+.feature {
+  width: 250px;
+  text-align: center;
+}
+
+/* CTA */
+.cta {
+  text-align: center;
+  padding: 60px;
+  background: #f4c430;
+}
+
+.cta button {
+  padding: 12px 24px;
+  background: black;
+  color: white;
+  border: none;
+}
+
+/* PACKAGES PAGE */
+.packages-page {
+  padding: 40px;
+}
+
+.packages-page h1 {
+  margin-bottom: 20px;
+}
+
+/* GRID (IMPORTANT FIX) */
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+/* CARD */
+.package-card {
+  background: white;
+  border: 2px solid #f4c430;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  overflow: hidden;
+   padding: 0;
+   text-align: center;
+}
+
+.package-card h3 {
+  font-size: 24px;      /* 👈 bigger */
+  font-weight: 700;    /* 👈 bold */
+  margin-top: 15px;
+}
+
+/* Price */
+.package-card p {
+  font-size: 22px;      /* 👈 bigger */
+  font-weight: 700;    /* 👈 bold */
+  margin-top: 8px;
+  color: #f4c430;
+}
+
+.package-card:hover {
+  transform: scale(1.05);
+  background: #fff9e6;
+}
+
+/* DESTINATION PAGE */
+.destination-page {
+  padding: 40px;
+}
+
+
+
+.gallery-main {
+  width: 100%;
+}
+
+.image-gallery {
+  width: 100%;
+}
+
+.gallery-thumbnails {
+  display: flex;
+  gap: 10px;       
+  margin-top: 15px;
+  width: 100%;
+}
+
+
+.gallery-thumbnails img {
+  width: 25%;
+  height: 110px;
+  object-fit: cover;
+}
+.gallery {
+  width: 100%;
+}
+
+/* ✅ FINAL MAIN IMAGE */
+.main-img {
+  width: 200%;
+  height: 800px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* THUMBNAILS */
+.gallery-thumbnails {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+
+.gallery-thumbnails img:hover {
+  transform: scale(1.05);
+}
+
+.gallery-thumbnails img.active {
+  border: 3px solid #f4c430;
+  transform: scale(1.1);
+}
+/* ACTIVE */
+.thumbnail.active {
+  border: 3px solid #f5b400;
+}
+
+/* BOOKING SECTION */
+.booking-section {
+  background: white;
+  padding: 20px;
+  border: 2px solid #f4c430;
+  border-radius: 10px;
+  width: 300px;
+}
+
+.booking-section input {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+/* TOTAL */
+.total {
+  color: #f4c430;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* BUTTON */
+button {
+  background: #f4c430;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+/* ===== FINAL CHATBOT FIX ===== */
+
+/* CHATBOT CONTAINER */
+.chatbot-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 9999;
+}
+
+/* YELLOW CIRCLE BUTTON */
+.chat-icon {
+  width: 65px;
+  height: 65px;
+  background: #f4c430;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+.chat-icon:hover {
+  transform: scale(1.1);
+}
+
+/* CHAT WINDOW */
+.chat-window {
+  width: 320px;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+/* HEADER */
+.chat-header {
+  background: #f4c430;
+  padding: 14px;
+  font-weight: bold;
+  position: relative;
+}
+
+/* CLOSE BUTTON */
+.close-btn {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* BODY */
+.chat-body {
+  height: 220px;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+/* MESSAGES */
+.user {
+  background: #f4c430;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 8px;
+  float: right;
+  clear: both;
+}
+
+.bot {
+  background: #eaeaea;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 8px;
+  float: left;
+  clear: both;
+}
+
+/* INPUT */
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+}
+
+.chat-input button {
+  background: #f4c430;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.destination-container {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr;   /* better balance */
+  gap: 30px;
+  padding: 40px;
+  max-width: 1400px;
+  margin: auto;
+  align-items: start;
+}
+
+.destination-images {
+  width: 100%;
+}
+
+
+
+.booking-card {
+  width: 100%;
+  min-width: 0;        
+  max-width: 100%;    
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #f4c430;
+}
+.booking-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;   
+}
+
+.booking-card input,
+.booking-card select {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+    width: 100%;
+  padding: 8px;          /* 👈 smaller input height */
+  margin-bottom: 8px; 
+}
+.booking-card label {
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* FIX DROPDOWN LINE ISSUE */
+.booking-card select {
+  margin-bottom: 10px;
+}
+
+/* BUTTON */
+.booking-card button {
+  margin-top: 20px;
+  padding: 12px;
+  background: #f4c430;
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.booking-card button:hover {
+  background: #e0b72f;
+}
+* {
+  box-sizing: border-box;
+}
+/* LIGHTBOX */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.lightbox img {
+  width: 700px;         /* FIX WIDTH */
+  height: 450px;        /* FIX HEIGHT */
+  object-fit: cover;    /* CROP PERFECTLY */
+  border-radius: 10px;
+}
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.success-popup {
+  background: white;
+  padding: 35px;
+  border-radius: 15px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+}
+
+.success-popup h2 {
+  color: #1a8f3c;
+  margin-bottom: 15px;
+}
+
+.success-popup p {
+  margin-bottom: 10px;
+}
+
+.success-popup button {
+  margin-top: 15px;
+  background: #f5c518;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}

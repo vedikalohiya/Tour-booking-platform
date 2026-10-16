@@ -1,0 +1,77 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "TourSearch API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/getPackages": {
+      "post": {
+        "operationId": "getPackages",
+        "description": "Get all tour packages",
+        "responses": {
+          "200": {
+            "description": "Packages"
+          }
+        }
+      }
+    },
+    "/getAvailableDates": {
+      "post": {
+        "operationId": "getAvailableDates",
+        "description": "Get available dates for package",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PackageID": {
+                    "type": "string"
+                  }
+                },
+                "required": ["PackageID"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dates"
+          }
+        }
+      }
+    },
+    "/checkAvailability": {
+      "post": {
+        "operationId": "checkAvailability",
+        "description": "Check seat availability for a package on a specific date",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PackageID": {
+                    "type": "string"
+                  },
+                  "TripDate": {
+                    "type": "string"
+                  }
+                },
+                "required": ["PackageID", "TripDate"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Availability status"
+          }
+        }
+      }
+    }
+  }
+}

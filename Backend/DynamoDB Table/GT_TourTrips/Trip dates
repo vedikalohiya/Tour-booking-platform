@@ -1,0 +1,40 @@
+TripID (String)
+	
+PackageID (String)
+	
+Date
+	
+Seats
+
+TripID (String)
+	
+PackageID (String)
+	
+Date
+	
+Seats
+
+Trip4
+Package4
+25-APR-2026
+55
+Trip3
+Package3
+31-DEC-2027
+50
+Trip6
+Package6
+01-JULY-2029
+105
+Trip2
+Package2
+26-JUNE-2027
+70
+3c1e1e58-da37-4e95-87f8-20f35af1d883
+Package1
+25-DEC-2026
+74
+Trip5
+Package5
+13-SEPT-2026
+90

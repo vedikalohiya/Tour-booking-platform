@@ -1,0 +1,67 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Booking API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/createBooking": {
+      "post": {
+        "operationId": "createBooking",
+        "description": "Create booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PackageID": {
+                    "type": "string"
+                  },
+                  "PackageName": {
+                    "type": "string"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Contact": {
+                    "type": "string"
+                  },
+                  "Email": {
+                    "type": "string"
+                  },
+                  "Adults": {
+                    "type": "integer"
+                  },
+                  "Children": {
+                    "type": "integer"
+                  },
+                  "TripDate": {
+                    "type": "string"
+                  },
+                  "TotalPrice": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "PackageID",
+                  "PackageName",
+                  "Name",
+                  "Contact",
+                  "Adults",
+                  "TripDate"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking created"
+          }
+        }
+      }
+    }
+  }
+}

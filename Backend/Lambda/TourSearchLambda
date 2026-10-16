@@ -1,0 +1,214 @@
+import boto3
+import json
+from decimal import Decimal
+from boto3.dynamodb.conditions import Key
+
+# Initialize the DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+
+
+def convert_decimal(obj):
+    """Convert Decimal objects to float for JSON serialization."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    return obj
+
+
+def convert_items(items):
+    """Convert all Decimal values in a list of DynamoDB items."""
+    return [
+        {k: convert_decimal(v) for k, v in item.items()} for item in items
+    ]
+
+
+def get_packages():
+    """Retrieve all tour packages from the TourPackages table."""
+    table = dynamodb.Table('TourPackages')
+    response = table.scan()
+    items = response.get('Items', [])
+    return convert_items(items)
+
+
+from boto3.dynamodb.conditions import Attr
+
+def get_available_dates(package_id):
+
+    table = dynamodb.Table('GT_TourTrips')
+
+    response = table.scan(
+        FilterExpression=Attr('PackageID').eq(package_id)
+    )
+
+    items = response.get('Items', [])
+
+    result = []
+
+    for item in items:
+
+        result.append({
+            "PackageID": item.get("PackageID", ""),
+            "Date": item.get("Date", ""),
+            "Seats": item.get("Seats", 0)
+        })
+
+    return result
+def check_availability(package_id, trip_date):
+    table = dynamodb.Table('GT_TourTrips')
+
+    response = table.scan(
+        FilterExpression=
+            Attr('PackageID').eq(package_id) &
+            Attr('Date').eq(trip_date)
+    )
+
+    items = response.get('Items', [])
+
+    if not items:
+        return {
+            "available": False,
+            "message": "No trip found"
+        }
+
+    trip = convert_items(items)[0]
+
+    available_seats = trip.get('Seats', 0)
+
+    return {
+        "available": available_seats > 0,
+        "availableSeats": available_seats,
+        "tripDetails": trip
+    }
+
+
+# changed by windsurf — detect if the event is from Bedrock Agent or API Gateway
+def is_bedrock_agent_event(event):
+    """Check if the event is from a Bedrock Agent action group invocation."""
+    return "actionGroup" in event and "messageVersion" in event
+
+
+# changed by windsurf — build Bedrock Agent response format
+def build_agent_response(event, result):
+    """Build response in the format expected by Bedrock Agent API-schema action groups."""
+    return {
+        "messageVersion": "1.0",
+        "response": {
+            "actionGroup": event.get("actionGroup", ""),
+            "apiPath": event.get("apiPath", ""),
+            "httpMethod": event.get("httpMethod", "POST"),
+            "responseBody": {
+                "application/json": {
+                    "body": json.dumps(result, ensure_ascii=False, default=str)
+                }
+            }
+        }
+    }
+
+
+# changed by windsurf — extract parameters from Bedrock Agent event (requestBody + parameters)
+def extract_agent_params(event):
+    """Extract a flat dict of parameters from a Bedrock Agent event."""
+    params = {}
+    for p in event.get("parameters", []):
+        if p.get("name"):
+            params[p["name"]] = p["value"]
+    request_body = event.get("requestBody", {})
+    rb_content = request_body.get("content", {})
+    rb_json = rb_content.get("application/json", {})
+    for prop in rb_json.get("properties", []):
+        if prop.get("name"):
+            params[prop["name"]] = prop.get("value", "")
+    return params
+
+
+def build_api_gw_response(status_code, result):
+    return {
+        'statusCode': status_code,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': '*'
+        },
+        'body': json.dumps(result, ensure_ascii=False, default=str)
+    }
+
+
+# changed by windsurf — handler now supports both Bedrock Agent and API Gateway callers
+def lambda_handler(event, context):
+    print("TourSearchLambda EVENT:", json.dumps(event))
+
+    try:
+        # changed by windsurf — detect caller type
+        agent_mode = is_bedrock_agent_event(event)
+
+        if agent_mode:
+            # Bedrock Agent: apiPath comes directly in the event
+            api_path = event.get("apiPath", "/getPackages")
+            body = extract_agent_params(event)
+        else:
+            # API Gateway: apiPath from wrapper or path, body from event body
+            api_path = event.get("apiPath", event.get("path", "/getPackages"))
+            raw_body = event.get("body", {})
+
+            if isinstance(raw_body, str):
+                body = json.loads(raw_body)
+            else:
+                body = raw_body
+
+        print("MODE:", "AGENT" if agent_mode else "API_GW")
+        print("API PATH:", api_path)
+        print("BODY:", json.dumps(body))
+
+        if api_path == "/getPackages":
+
+            packages = get_packages()
+
+            result = []
+
+            for p in packages:
+                result.append({
+                    "PackageName": p.get("Name", ""),
+                    "PackageID": p.get("PackageID", ""),
+                    "Price": p.get("Price", ""),
+                    "Images": p.get("Images", [])
+                })
+
+        elif api_path == "/getAvailableDates":
+
+            package_id = body.get("PackageID", "")
+
+            if not package_id:
+                err = {'error': 'PackageID is required'}
+                return build_agent_response(event, err) if agent_mode else build_api_gw_response(400, err)
+
+            result = get_available_dates(package_id)
+
+        elif api_path == "/checkAvailability":
+            package_id = body.get("PackageID", "")
+            trip_date = body.get("TripDate", "")
+            if not package_id or not trip_date:
+                err = {'error': 'PackageID and TripDate are required'}
+                return build_agent_response(event, err) if agent_mode else build_api_gw_response(400, err)
+            result = check_availability(package_id, trip_date)
+
+        else:
+            err = {'error': f'Unknown apiPath: {api_path}'}
+            return build_agent_response(event, err) if agent_mode else build_api_gw_response(400, err)
+
+        print("RESULT:", json.dumps(result, default=str))
+
+        # changed by windsurf — return in correct format based on caller
+        if agent_mode:
+            return build_agent_response(event, result)
+        else:
+            return build_api_gw_response(200, result)
+
+    except Exception as e:
+        error_message = f"Error in TourSearchLambda: {str(e)}"
+        print(error_message)
+        err = {'error': error_message}
+        # changed by windsurf — error response in correct format
+        if is_bedrock_agent_event(event):
+            return build_agent_response(event, err)
+        else:
+            return build_api_gw_response(500, err)

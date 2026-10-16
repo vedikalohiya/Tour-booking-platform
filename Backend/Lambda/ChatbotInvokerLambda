@@ -1,0 +1,87 @@
+import json
+import boto3
+import uuid
+
+# Initialize Bedrock Agent Runtime client
+bedrock_client = boto3.client('bedrock-agent-runtime')
+
+# Agent configuration
+AGENT_ID = "ADJPRBYJPX"
+AGENT_ALIAS_ID = "TSTALIASID"  # Update this to your production alias ID
+
+
+def lambda_handler(event, context):
+    """
+    Lambda function that invokes Bedrock Agent for chatbot interactions.
+    This is the endpoint that the frontend calls (/chatbot).
+    """
+    print("ChatbotInvokerLambda EVENT:", json.dumps(event))
+    
+    try:
+        # Parse request body
+        body = json.loads(event.get('body', '{}'))
+        
+        user_message = body.get('userMessage', '')
+        session_id = body.get('sessionId') or str(uuid.uuid4())
+        agent_id = body.get('agentId', AGENT_ID)
+        agent_alias_id = body.get('agentAliasId', AGENT_ALIAS_ID)
+        
+        print(f"User Message: {user_message}")
+        print(f"Session ID: {session_id}")
+        print(f"Agent ID: {agent_id}")
+        print(f"Agent Alias ID: {agent_alias_id}")
+        
+        # Invoke Bedrock Agent
+        response = bedrock_client.invoke_agent(
+            agentId=agent_id,
+            agentAliasId=agent_alias_id,
+            sessionId=session_id,
+            inputText=user_message
+        )
+        
+        print("Bedrock Agent Response:", json.dumps(response, default=str))
+        
+        # Parse the response stream
+        completion = response.get('completion', [])
+        response_text = ""
+        
+        for event in completion:
+            if 'chunk' in event:
+                chunk_bytes = event['chunk']['bytes']
+                response_text += chunk_bytes.decode('utf-8')
+        
+        print("Response Text:", response_text)
+        
+        # Return response to frontend
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': '*'
+            },
+            'body': json.dumps({
+                'reply': response_text,
+                'sessionId': session_id
+            }, ensure_ascii=False)
+        }
+        
+    except Exception as e:
+        print("ERROR:", str(e))
+        import traceback
+        traceback.print_exc()
+        
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': '*'
+            },
+            'body': json.dumps({
+                'reply': f"Error: {str(e)}",
+                'sessionId': body.get('sessionId') if 'body' in locals() else None
+            }, ensure_ascii=False)
+        }

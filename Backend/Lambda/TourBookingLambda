@@ -1,0 +1,136 @@
+import json
+import uuid
+import boto3
+from decimal import Decimal
+
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('TourBookings')
+
+
+# changed by windsurf — detect if the event is from Bedrock Agent or API Gateway
+def is_bedrock_agent_event(event):
+    """Check if the event is from a Bedrock Agent action group invocation."""
+    return "actionGroup" in event and "messageVersion" in event
+
+
+# changed by windsurf — build Bedrock Agent response format
+def build_agent_response(event, result):
+    """Build response in the format expected by Bedrock Agent API-schema action groups."""
+    return {
+        "messageVersion": "1.0",
+        "response": {
+            "actionGroup": event.get("actionGroup", ""),
+            "apiPath": event.get("apiPath", ""),
+            "httpMethod": event.get("httpMethod", "POST"),
+            "responseBody": {
+                "application/json": {
+                    "body": json.dumps(result, default=str)
+                }
+            }
+        }
+    }
+
+
+# changed by windsurf — extract parameters from Bedrock Agent event (requestBody + parameters)
+def extract_agent_params(event):
+    """Extract a flat dict of parameters from a Bedrock Agent event."""
+    params = {}
+    for p in event.get("parameters", []):
+        if p.get("name"):
+            params[p["name"]] = p["value"]
+    request_body = event.get("requestBody", {})
+    rb_content = request_body.get("content", {})
+    rb_json = rb_content.get("application/json", {})
+    for prop in rb_json.get("properties", []):
+        if prop.get("name"):
+            params[prop["name"]] = prop.get("value", "")
+    return params
+
+
+def build_api_gw_response(status_code, result):
+    return {
+        'statusCode': status_code,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': '*'
+        },
+        'body': json.dumps(result, ensure_ascii=False, default=str)
+    }
+
+
+# changed by windsurf — handler now supports both Bedrock Agent and API Gateway callers
+def lambda_handler(event, context):
+    print("TourBookingLambda EVENT:", json.dumps(event))
+
+    try:
+        # changed by windsurf — detect caller type and extract body accordingly
+        agent_mode = is_bedrock_agent_event(event)
+
+        if agent_mode:
+            # For Bedrock Agent, check the apiPath
+            api_path = event.get("apiPath", "/createBooking")
+            if api_path != "/createBooking":
+                err = {'error': f'Invalid apiPath: {api_path}. Expected /createBooking'}
+                return build_agent_response(event, err)
+            body = extract_agent_params(event)
+        else:
+            body = json.loads(event.get('body', '{}'))
+
+        print("MODE:", "AGENT" if agent_mode else "API_GW")
+        print("BODY:", json.dumps(body))
+
+        # Validate required fields
+        required_fields = ['PackageID', 'PackageName', 'Name', 'Contact', 'Adults', 'TripDate']
+        missing_fields = [field for field in required_fields if not body.get(field)]
+        
+        if missing_fields:
+            err = {'error': f'Missing required fields: {", ".join(missing_fields)}'}
+            if agent_mode:
+                return build_agent_response(event, err)
+            else:
+                return build_api_gw_response(400, err)
+
+        # Generate a unique BookingID
+        booking_id = str(uuid.uuid4())
+
+        # Extract fields — use PascalCase keys matching the schema sent by the agent
+        item = {
+            'BookingID': booking_id,
+            'PackageID': str(body.get('PackageID', '')),
+            'PackageName': str(body.get('PackageName', '')),
+            'Name': str(body.get('Name', '')),
+            'Contact': str(body.get('Contact', '')),
+            'Email': str(body.get('Email', '')),
+            'Adults': str(body.get('Adults', '0')),
+            'Children': str(body.get('Children', '0')),
+            'TripDate': str(body.get('TripDate', '')),
+            'TotalPrice': str(body.get('TotalPrice', '0'))
+        }
+
+        # Insert into DynamoDB
+        table.put_item(Item=item)
+
+        result = {
+            'message': 'Booking successful',
+            'bookingId': booking_id,
+            'packageName': item['PackageName'],
+            'totalPrice': item['TotalPrice']
+        }
+
+        # changed by windsurf — return in correct format based on caller
+        if agent_mode:
+            return build_agent_response(event, result)
+        else:
+            return build_api_gw_response(200, result)
+
+    except Exception as e:
+        print("ERROR:", str(e))
+        err = {'message': 'Internal server error', 'error': str(e)}
+        # changed by windsurf — error response in correct format
+        if is_bedrock_agent_event(event):
+            return build_agent_response(event, err)
+        else:
+            return build_api_gw_response(500, err)
